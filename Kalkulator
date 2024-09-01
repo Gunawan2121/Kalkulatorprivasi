@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Ikon</title>
+    <style>
+        #calculator {
+            width: 300px;
+            margin: 10px auto;
+            display: none; /* Kalkulator disembunyikan secara default */
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #f9f9f9;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            position: absolute; /* Agar dapat diatur posisinya */
+        }
+        .calc-btn {
+            width: 60px;
+            height: 60px;
+            margin: 5px;
+            font-size: 24px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #e0e0e0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .calc-btn:hover {
+            background-color: #c0c0c0;
+        }
+        #display {
+            width: calc(100% - 20px);
+            height: 60px;
+            font-size: 24px;
+            text-align: right;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        #profit-btn {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        #profit-btn:hover {
+            background-color: #45a049;
+        }
+        #calc-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #4CAF50;
+            background-image: url('https://cdn-icons-png.flaticon.com/512/1828/1828817.png'); /* Ikon kalkulator */
+            background-size: cover;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: box-shadow 0.3s;
+            position: absolute; /* Agar bisa dipindahkan */
+            top: 20px; /* Posisi awal vertikal */
+            left: 20px; /* Posisi awal horizontal */
+        }
+        #close-btn {
+            width: 30px;
+            height: 30px;
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 18px;
+            line-height: 30px;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+        #close-btn:hover {
+            background-color: #e60000;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ikon Kalkulator -->
+    <div id="calc-icon" onclick="toggleCalculator()"></div>
+
+    <!-- Kalkulator -->
+    <div id="calculator">
+        <button id="close-btn" onclick="toggleCalculator()">×</button>
+        <input type="text" id="display" disabled>
+        <br>
+        <button class="calc-btn" onclick="appendNumber(7)">7</button>
+        <button class="calc-btn" onclick="appendNumber(8)">8</button>
+        <button class="calc-btn" onclick="appendNumber(9)">9</button>
+        <button class="calc-btn" onclick="setOperation('+')">+</button>
+        <br>
+        <button class="calc-btn" onclick="appendNumber(4)">4</button>
+        <button class="calc-btn" onclick="appendNumber(5)">5</button>
+        <button class="calc-btn" onclick="appendNumber(6)">6</button>
+        <button class="calc-btn" onclick="setOperation('-')">-</button>
+        <br>
+        <button class="calc-btn" onclick="appendNumber(1)">1</button>
+        <button class="calc-btn" onclick="appendNumber(2)">2</button>
+        <button class="calc-btn" onclick="appendNumber(3)">3</button>
+        <button class="calc-btn" onclick="setOperation('*')">×</button>
+        <br>
+        <button class="calc-btn" onclick="appendNumber(0)">0</button>
+        <button class="calc-btn" onclick="appendNumber('.')">.</button>
+        <button class="calc-btn" onclick="calculate()">=</button>
+        <button class="calc-btn" onclick="setOperation('/')">÷</button>
+        <br>
+        <button class="calc-btn" onclick="applyPercentage()">%</button>
+        <button class="calc-btn" onclick="clearDisplay()">C</button>
+        <br>
+        <button id="profit-btn">Profit</button>
+        <div id="saved-profit" style="margin-top: 10px; font-size: 16px;">Saved Profit: 0</div>
+    </div>
+
+    <script>
+        let currentOperation = '';
+        let firstOperand = '';
+        let savedProfit = 0;
+        let clickCount = 0;
+
+        function appendNumber(number) {
+            document.getElementById('display').value += number;
+        }
+
+        function setOperation(operation) {
+            firstOperand = document.getElementById('display').value;
+            currentOperation = operation;
+            document.getElementById('display').value = '';
+        }
+
+        function calculate() {
+            let secondOperand = document.getElementById('display').value;
+            let result = 0;
+
+            switch (currentOperation) {
+                case '+':
+                    result = parseFloat(firstOperand) + parseFloat(secondOperand);
+                    break;
+                case '-':
+                    result = parseFloat(firstOperand) - parseFloat(secondOperand);
+                    break;
+                case '*':
+                    result = parseFloat(firstOperand) * parseFloat(secondOperand);
+                    break;
+                case '/':
+                    result = parseFloat(firstOperand) / parseFloat(secondOperand);
+                    break;
+            }
+
+            document.getElementById('display').value = result;
+            currentOperation = '';
+        }
+
+        function applyPercentage() {
+            let secondOperand = parseFloat(document.getElementById('display').value);
+            if (currentOperation === '+' || currentOperation === '-') {
+                secondOperand = parseFloat(firstOperand) * (secondOperand / 100);
+                document.getElementById('display').value = secondOperand;
+                calculate();
+            } else if (currentOperation === '*' || currentOperation === '/') {
+                document.getElementById('display').value = secondOperand / 100;
+            }
+        }
+
+        function clearDisplay() {
+            document.getElementById('display').value = '';
+            firstOperand = '';
+            currentOperation = '';
+        }
+
+        function saveProfit() {
+            savedProfit = parseFloat(document.getElementById('display').value);
+            document.getElementById('saved-profit').textContent = "Saved Profit: " + savedProfit;
+        }
+
+        function resetProfit() {
+            savedProfit = 0;
+            document.getElementById('saved-profit').textContent = "Saved Profit: 0";
+        }
+
+        document.getElementById('profit-btn').addEventListener('click', function() {
+            clickCount++;
+            setTimeout(function() {
+                if (clickCount === 1) {
+                    saveProfit();
+                } else if (clickCount === 2) {
+                    resetProfit();
+                }
+                clickCount = 0;
+            }, 250);
+        });
+
+        function toggleCalculator() {
+            let calculator = document.getElementById('calculator');
+            if (calculator.style.display === 'none') {
+                calculator.style.display = 'block';
+            } else {
+                calculator.style.display = 'none';
+            }
+        }
+
+        // Drag and Drop functionality
+        let calcIcon = document.getElementById('calc-icon');
+        let isDragging = false;
+        let offsetX, offsetY;
+
+        calcIcon.addEventListener('mousedown', function(e) {
+            isDragging = true;
+            offsetX = e.clientX - calcIcon.getBoundingClientRect().left;
+            offsetY = e.clientY - calcIcon.getBoundingClientRect().top;
+            e.preventDefault(); // Prevent default drag behavior
+        });
+
+        window.addEventListener('mousemove', function(e) {
+            if (isDragging) {
+                calcIcon.style.left = (e.clientX - offsetX) + 'px';
+                calcIcon.style.top = (e.clientY - offsetY) + 'px';
+            }
+        });
+
+        window.addEventListener('mouseup', function() {
+            isDragging = false;
+        });
+    </script>
+</body>
+</html>
